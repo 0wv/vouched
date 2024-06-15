@@ -82,8 +82,6 @@ export class ProfileCommands {
 
     const averageStars = vouches[0]?.averageStars || 0;
 
-    // console.log(vouches[0].lastVouches);
-
     let lastVouchesString = "";
 
     vouches[0].lastVouches.forEach((vouch: any, index: number) => {
