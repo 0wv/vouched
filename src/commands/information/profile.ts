@@ -72,13 +72,12 @@ export class ProfileCommands {
           let: { vouchedUser: "$_id" },
           pipeline: [
             { $match: { $expr: { $eq: ["$vouchedUser", "$$vouchedUser"] } } },
-            { $sort: { timestamp: -1 } },
+            { $sort: { createdAt: -1 } },
             { $limit: 3 },
           ],
           as: "lastVouches",
         },
       },
-      { $sort: { "lastVouches.timestamp": -1 } },
     ]);
 
     const averageStars = vouches[0]?.averageStars || 0;
@@ -88,7 +87,7 @@ export class ProfileCommands {
     let lastVouchesString = "";
 
     vouches[0].lastVouches.forEach((vouch: any, index: number) => {
-      lastVouchesString += `${index + 1}. <@${vouch.vouchedBy}> - ${Emojis.STAR.repeat(vouch.stars) + Emojis.STAROUTLINE.repeat(5 - vouch.stars)}\n`;
+      lastVouchesString += `${index + 1}. <@${vouch.vouchedBy}> - ${Emojis.STAR.repeat(vouch.stars) + Emojis.STAROUTLINE.repeat(5 - vouch.stars)} **\` $${vouch.amount} \`** \n`;
     });
 
     const totalAmount = vouches[0]?.totalAmount || 0;
@@ -105,6 +104,7 @@ export class ProfileCommands {
         name: "Last 3 Vouches",
         value: lastVouchesString || "*No vouches yet :(*",
       })
+      .setInvisible()
       .setFooter({ text: `powered by Vouched` });
 
     await interaction.reply({ embeds: [profileEmbed], ephemeral: true });

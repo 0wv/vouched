@@ -53,6 +53,17 @@ export class ResetCommands {
 
     await Profiles.deleteOne({ "user.id": userVar.id });
 
+    await Profiles.create({
+      guildId: interaction.guild.id,
+      user: {
+        id: userVar.id,
+        username: userVar.user.username,
+        nickname: userVar.nickname,
+      },
+      vouches: 0,
+      totalAmount: 0,
+    });
+
     await interaction.reply({
       content: `Reset ${userVar}'s profile.`,
       ephemeral: true,
