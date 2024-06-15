@@ -1,0 +1,6 @@
+export enum Emojis {
+  BLANK = "<:blank:1251340102114869349>",
+  CHECKMARK = "<:checkmark:1251340044623679549>",
+  STAR = "<:star:1251332672144412702>",
+  STAROUTLINE = "<:staroutline:1251332698048434251>",
+}

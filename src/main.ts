@@ -1,55 +1,11 @@
 import { dirname, importx } from "@discordx/importer";
-import type { Interaction, Message } from "discord.js";
-import { IntentsBitField } from "discord.js";
-import { Client } from "discordx";
 
-export const bot = new Client({
-  // To use only guild command
-  // botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
+import { bot } from "../src/bot.js";
+import { config } from "dotenv";
+import colors from "colors";
+import { connect } from "mongoose";
 
-  // Discord intents
-  intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.GuildMessageReactions,
-    IntentsBitField.Flags.GuildVoiceStates,
-  ],
-
-  // Debug logs are disabled in silent mode
-  silent: false,
-
-  // Configuration for @SimpleCommand
-  simpleCommand: {
-    prefix: "!",
-  },
-});
-
-bot.once("ready", async () => {
-  // Make sure all guilds are cached
-  // await bot.guilds.fetch();
-
-  // Synchronize applications commands with Discord
-  await bot.initApplicationCommands();
-
-  // To clear all guild commands, uncomment this line,
-  // This is useful when moving from guild commands to global commands
-  // It must only be executed once
-  //
-  //  await bot.clearApplicationCommands(
-  //    ...bot.guilds.cache.map((g) => g.id)
-  //  );
-
-  console.log("Bot started");
-});
-
-bot.on("interactionCreate", (interaction: Interaction) => {
-  bot.executeInteraction(interaction);
-});
-
-bot.on("messageCreate", async (message: Message) => {
-  await bot.executeCommand(message);
-});
+config();
 
 async function run() {
   // The following syntax should be used in the commonjs environment
@@ -66,6 +22,14 @@ async function run() {
 
   // Log in with your bot token
   await bot.login(process.env.BOT_TOKEN);
+
+  // Connect to MongoDB
+  if (!process.env.MONGO_SRV) {
+    throw Error("Could not find MONGODB_SRV in your environment");
+  }
 }
 
-void run();
+connect(process.env.MONGO_SRV as string).then(() => {
+  console.log("\u001b[36m+" + "\u001b[37m Connected to database");
+  run()
+})
