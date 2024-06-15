@@ -7,7 +7,7 @@ export default class EmbedMe extends EmbedBuilder {
 	}
 
 	public setSuccess(): this {
-		this.setColor(0x302c34);
+		this.setColor(0x2EFF5B);
 		return this;
 	}
 

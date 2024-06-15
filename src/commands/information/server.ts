@@ -16,7 +16,7 @@ import { Emojis } from "../../utils/Emojis.js";
 export class ProfileCommands {
   @Slash({
     description: "view a server's stats",
-    name: "server",
+    name: "serverstats",
   })
   async profile(interaction: CommandInteraction): Promise<void> {
     if (!interaction.guild) return;
@@ -54,7 +54,7 @@ export class ProfileCommands {
     const serverStats = new EmbedMe()
       .setTitle("Server Stats")
       .setDescription(
-        `__Vouches:__ ${stats.vouches.totalVouches}\n__Exchanged:__ **$**${stats.vouches.totalAmount}`
+        `__Vouches:__ ${stats.vouches.totalVouches}\n__Exchanged:__ **$**${stats.vouches.totalAmount.toFixed(2)}`
       )
       .setThumbnail(interaction.guild.iconURL())
       .setFooter({ text: `powered by Vouched` })

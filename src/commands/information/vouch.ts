@@ -182,6 +182,36 @@ export class LevelRoleCommands {
         }
       );
     }
+
+    const vouchDm = new EmbedMe()
+      .setTitle(`You've been vouched in ${interaction.guild.name}`)
+      .setURL(channel.url)
+      .setThumbnail(interaction.guild.iconURL())
+      .setDescription(
+        `${Emojis.STAR.repeat(stars) + Emojis.STAROUTLINE.repeat(5 - stars)}`
+      )
+      .addFields(
+        {
+          name: "Vouched By",
+          value: `<@${interaction.user.id}>`,
+          inline: true,
+        },
+        {
+          name: "Amount",
+          value: "**$**" + amountVar,
+          inline: true,
+        },
+        {
+          name: "Note",
+          value: "*" + noteVar + "*",
+        }
+      )
+      .setFooter({ text: `powered by Vouched` })
+      .setSuccess();
+
+    await userVar.send({
+      embeds: [vouchDm],
+    });
   }
 
   @Slash({

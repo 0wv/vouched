@@ -94,7 +94,7 @@ export class ProfileCommands {
       .setTitle(`${userVar.user.displayName}'s Profile`)
       .setThumbnail(userVar.user.displayAvatarURL())
       .setDescription(
-        `**Vouches:** ${profile.vouches}\n**total amount:** **\` $${totalAmount} \`**\n**Average Rating:** ${parseInt(
+        `**Vouches:** ${profile.vouches}\n**total amount:** **\` $${totalAmount.toFixed(2)} \`**\n**Average Rating:** ${parseInt(
           averageStars.toFixed(2)
         )}/5 Stars`
       )
