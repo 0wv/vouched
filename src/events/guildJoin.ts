@@ -14,9 +14,13 @@ export class MemberJoin {
 
     await Settings.create({
       guildId: guild.id,
-      vouchChannel: "",
-      vouchRole: "",
-      vouchEmoji: "",
+      Channels: {
+        vouches: null,
+      },
     });
+
+    console.log(
+      "\u001b[33m+" + "\u001b[37m Created settings for " + guild.name
+    );
   }
 }

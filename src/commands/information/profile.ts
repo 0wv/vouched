@@ -6,11 +6,11 @@ import {
   TextChannel,
 } from "discord.js";
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
-import EmbedMe from "../utils/EmbedMe.js";
-import Profiles from "../models/Profile.js";
-import Settings from "../models/Settings.js";
-import Vouches from "../models/Vouches.js";
-import { Emojis } from "../utils/Emojis.js";
+import EmbedMe from "../../utils/EmbedMe.js";
+import Profiles from "../../models/Profile.js";
+import Settings from "../../models/Settings.js";
+import Vouches from "../../models/Vouches.js";
+import { Emojis } from "../../utils/Emojis.js";
 
 @Discord()
 export class ProfileCommands {
@@ -63,6 +63,7 @@ export class ProfileCommands {
         $group: {
           _id: "$vouchedUser",
           averageStars: { $avg: "$stars" },
+          totalAmount: { $sum: "$amount" },
         },
       },
       {
@@ -81,8 +82,7 @@ export class ProfileCommands {
 
     const averageStars = vouches[0]?.averageStars || 0;
 
-    //fetch the user's last 3 vouches and display the stars
-    console.log(vouches[0].lastVouches);
+    // console.log(vouches[0].lastVouches);
 
     let lastVouchesString = "";
 
@@ -90,11 +90,13 @@ export class ProfileCommands {
       lastVouchesString += `${index + 1}. <@${vouch.vouchedBy}> - ${Emojis.STAR.repeat(vouch.stars) + Emojis.STAROUTLINE.repeat(5 - vouch.stars)}\n`;
     });
 
+    const totalAmount = vouches[0]?.totalAmount || 0;
+
     const profileEmbed = new EmbedMe()
       .setTitle(`${userVar.user.displayName}'s Profile`)
       .setThumbnail(userVar.user.displayAvatarURL())
       .setDescription(
-        `**Vouches:** ${profile.vouches}\n**Average Stars:** ${parseInt(
+        `**Vouches:** ${profile.vouches}\n**total amount:** **\` $${totalAmount} \`**\n**Average Stars:** ${parseInt(
           averageStars.toFixed(2)
         )}/5`
       )

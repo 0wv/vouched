@@ -6,11 +6,12 @@ import {
   TextChannel,
 } from "discord.js";
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
-import EmbedMe from "../utils/EmbedMe.js";
-import Profiles from "../models/Profile.js";
-import Settings from "../models/Settings.js";
-import Vouches from "../models/Vouches.js";
-import { Emojis } from "../utils/Emojis.js";
+import EmbedMe from "../../utils/EmbedMe.js";
+import Profiles from "../../models/Profile.js";
+import Settings from "../../models/Settings.js";
+import Vouches from "../../models/Vouches.js";
+import { Emojis } from "../../utils/Emojis.js";
+import Statistics from "../../models/Statistics.js";
 
 @Discord()
 @SlashGroup({
@@ -31,6 +32,13 @@ export class LevelRoleCommands {
       required: true,
     })
     userVar: GuildMember,
+    @SlashOption({
+      description: "the amount of the transaction - e.g. 5 or 11.59",
+      name: "amount",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    })
+    amountVar: string,
     @SlashOption({
       description: "a note about the transaction.",
       name: "note",
@@ -87,6 +95,7 @@ export class LevelRoleCommands {
       vouchedBy: interaction.user.id,
       stars: starsVar,
       note: noteVar,
+      amount: amountVar,
     });
 
     await Profiles.updateOne(
@@ -137,6 +146,11 @@ export class LevelRoleCommands {
           inline: true,
         },
         {
+          name: "Amount",
+          value: "**$**" + amountVar,
+          inline: true,
+        },
+        {
           name: "Note",
           value: "*" + noteVar + "*",
         }
@@ -147,6 +161,27 @@ export class LevelRoleCommands {
     await channel.send({
       embeds: [vouchEmbed],
     });
+
+    const stats = await Statistics.findOne({ guildId: interaction.guild.id });
+
+    if (!stats) {
+      await Statistics.create({
+        guildId: interaction.guild.id,
+        vouches: {
+          totalVouches: 1,
+        },
+      });
+    } else {
+      await Statistics.updateOne(
+        { guildId: interaction.guild.id },
+        {
+          $inc: {
+            "vouches.totalVouches": 1,
+            "vouches.totalAmount": Number(amountVar),
+          },
+        }
+      );
+    }
   }
 
   @Slash({
@@ -174,7 +209,7 @@ export class LevelRoleCommands {
       });
     }
 
-    const settings = await Settings.findOne({ guildID: interaction.guild.id });
+    const settings = await Settings.findOne({ guildId: interaction.guild.id });
 
     if (!settings) {
       await Settings.create({

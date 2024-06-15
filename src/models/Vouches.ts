@@ -6,6 +6,7 @@ export interface IVouches extends Document {
   vouchedBy: string;
   stars: number;
   note: string;
+  amount: number;
 }
 
 const VouchesSchema: Schema = new Schema(
@@ -15,6 +16,7 @@ const VouchesSchema: Schema = new Schema(
     vouchedBy: { type: String, required: true },
     stars: { type: Number, required: true },
     note: { type: String, required: false },
+    amount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

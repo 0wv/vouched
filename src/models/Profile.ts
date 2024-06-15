@@ -8,6 +8,7 @@ export interface IProfile extends Document {
     nickname: string;
   };
   vouches: number;
+  totalAmount: number;
   updatedAt: Date;
 }
 
@@ -20,6 +21,7 @@ const ProfileSchema: Schema = new Schema(
       nickname: { type: String, required: false },
     },
     vouches: { type: Number, default: 0 },
+    totalAmount: { type: Number, default: 0 },
     updatedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
