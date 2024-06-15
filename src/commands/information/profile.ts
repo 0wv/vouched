@@ -78,6 +78,7 @@ export class ProfileCommands {
           as: "lastVouches",
         },
       },
+      { $sort: { "lastVouches.timestamp": -1 } },
     ]);
 
     const averageStars = vouches[0]?.averageStars || 0;
@@ -96,9 +97,9 @@ export class ProfileCommands {
       .setTitle(`${userVar.user.displayName}'s Profile`)
       .setThumbnail(userVar.user.displayAvatarURL())
       .setDescription(
-        `**Vouches:** ${profile.vouches}\n**total amount:** **\` $${totalAmount} \`**\n**Average Stars:** ${parseInt(
+        `**Vouches:** ${profile.vouches}\n**total amount:** **\` $${totalAmount} \`**\n**Average Rating:** ${parseInt(
           averageStars.toFixed(2)
-        )}/5`
+        )}/5 Stars`
       )
       .addFields({
         name: "Last 3 Vouches",

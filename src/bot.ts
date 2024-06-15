@@ -35,18 +35,18 @@ export const bot = new Client({
   silent: true,
 }) as Client
 
-// async function updatePresence() {
-//   bot.user?.setPresence({
-//     activities: [
-//       {
-//         type: ActivityType.Custom,
-//         name: "custom", // name is exposed through the API but not shown in the client for ActivityType.Custom
-//         state: `.gg/glock`,
-//       },
-//     ],
-//     status: "dnd",
-//   });
-// }
+async function updatePresence() {
+  bot.user?.setPresence({
+    activities: [
+      {
+        type: ActivityType.Custom,
+        name: "custom", // name is exposed through the API but not shown in the client for ActivityType.Custom
+        state: `Managing Vouches`,
+      },
+    ],
+    status: "dnd",
+  });
+}
 
 bot.once("ready", async () => {
   await bot.guilds.fetch();
@@ -54,8 +54,8 @@ bot.once("ready", async () => {
   // Synchronize applications commands with Discord
   await bot.initApplicationCommands();
 
-  // updatePresence();
-  // setInterval(updatePresence, 300000);
+  updatePresence();
+  setInterval(updatePresence, 300000);
 
 
   // To clear all guild commands, uncomment this line,

@@ -27,7 +27,7 @@ export default class EmbedMe extends EmbedBuilder {
 	}
 
 	public setInfo(): this {
-		this.setImage("https://cdn.discordapp.com/attachments/895632161057669180/930131378379554876/void_default_bar.PNG").setColor(0x302c34);
+		this.setColor(0x302c34);
 		return this;
 	}
 
