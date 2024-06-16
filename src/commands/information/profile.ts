@@ -32,10 +32,7 @@ export class ProfileCommands {
     if (interaction.user.bot) return;
 
     // check if the user has a profile, if not create one
-    const profile = await Profiles.findOne({
-      guildId: interaction.guild.id,
-      "user.id": userVar.id,
-    });
+    const profile = await Profiles.findOne({ "user.id": userVar.id });
 
     if (!profile) {
       await Profiles.create({

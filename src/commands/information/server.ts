@@ -37,6 +37,7 @@ export class ProfileCommands {
     if (!stats) {
       await Statistics.create({
         guildId: interaction.guild.id,
+        guildName: interaction.guild.name,
         vouches: {
           totalVouches: 0,
           totalAmount: 0,

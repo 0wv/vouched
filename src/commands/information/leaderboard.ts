@@ -122,43 +122,59 @@ export class LeaderboardCommands {
     name: "global",
   })
   async globalLeaderboard(interaction: CommandInteraction): Promise<void> {
-    // fetch all stats in the database and sort by total vouches descending and total amount descending, then slice the top 10
-    const stats = await Statistics.find().sort({
-      "vouches.totalVouches": -1,
-      "vouches.totalAmount": -1,
-    });
+    if (!interaction.guild) return;
+    // fetch all profiles in the guild and sort by vouches descending
+    const profiles = await Profiles.find().sort({ vouches: -1 }).limit(10);
 
-    if (!stats) {
+    if (!profiles) {
       await interaction.reply({
-        content: `There are no stats to display.`,
+        content: `This server does not have any profiles.`,
         ephemeral: true,
       });
 
       return;
     }
 
-    // create a leaderboard embed with the top 10 most vouches in
+    //total up all vouches and total amount exchanged
+    const vouches = await Vouches.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalVouches: { $sum: "$vouches" },
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
 
     const leaderboard = new EmbedMe()
       .setTitle(`Global Leaderboard`)
       .setDescription(
-        stats
-          .slice(0, 10)
+        profiles
           .map(
-            (stat, index) =>
-              `**\` ${index + 1} \`** ${Emojis.BLANK}**${stat.guildId}** - **${stat.vouches.totalVouches}** Vouches`
+            (profile, index) =>
+              `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${profile.vouches}** Vouches`
           )
           .join("\n")
       )
+      .setThumbnail(interaction.guild.iconURL())
       .addFields(
         {
-          name: "Vouches",
-          value: `${Emojis.BLANK}${stats[0].vouches.totalVouches}`,
+          name: " Your Rank",
+          value: `${Emojis.BLANK}**\` ${
+            profiles.findIndex(
+              (profile) => profile.user.id === interaction.user.id
+            ) + 1
+          } \`**`,
           inline: true,
         },
         {
-          name: "Total Exchanged",
-          value: `${Emojis.BLANK} **$**${stats[0].vouches.totalAmount.toFixed(2)}`,
+          name: "Global Vouches",
+          value: `${Emojis.BLANK}${vouches[0].totalVouches}`,
+          inline: true,
+        },
+        {
+          name: "Globally Exchanged",
+          value: `${Emojis.BLANK} **$**${vouches[0].totalAmount.toFixed(2)}`,
           inline: true,
         }
       )
