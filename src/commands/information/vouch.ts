@@ -155,8 +155,11 @@ export class LevelRoleCommands {
           value: "*" + noteVar + "*",
         }
       )
-      .setFooter({ text: `powered by Vouched` })
-      .setSuccess();
+      .setFooter({
+        text: `powered by Vouched`,
+        iconURL: interaction.client.user.displayAvatarURL(),
+      })
+      .setInvisible()
 
     await channel.send({
       embeds: [vouchEmbed],
@@ -169,6 +172,7 @@ export class LevelRoleCommands {
         guildId: interaction.guild.id,
         vouches: {
           totalVouches: 1,
+          totalAmount: Number(amountVar),
         },
       });
     } else {
@@ -206,8 +210,11 @@ export class LevelRoleCommands {
           value: "*" + noteVar + "*",
         }
       )
-      .setFooter({ text: `powered by Vouched` })
-      .setSuccess();
+      .setFooter({
+        text: `powered by Vouched`,
+        iconURL: interaction.client.user.displayAvatarURL(),
+      })
+      .setInvisible()
 
     await userVar.send({
       embeds: [vouchDm],

@@ -15,9 +15,12 @@ export class MemberJoin {
 
     await Settings.create({
       guildId: guild.id,
+      guildName: guild.name,
+      guildIcon: guild.iconURL(),
       Channels: {
         vouches: null,
       },
+
     });
 
     console.log(
@@ -27,6 +30,7 @@ export class MemberJoin {
     await Statistics.create({
       guildId: guild.id,
       guildName: guild.name,
+      guildIcon: guild.iconURL(),
       vouches: {
         totalVouches: 0,
         totalAmount: 0,

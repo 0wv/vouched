@@ -2,6 +2,8 @@ import { EmbedBuilder } from "discord.js"
 
 
 export default class EmbedMe extends EmbedBuilder {
+  [x: string]: any;
+  id: any | string;
 	constructor() {
 		super();
 	}
