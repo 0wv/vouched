@@ -178,8 +178,8 @@ export class LeaderboardCommands {
           inline: true,
         }
       )
-      .setFooter({ text: `powered by Vouched` })
-      .setInvisible();
+      // .setFooter({ text: `powered by Vouched` })
+      .setMain();
 
     await interaction.reply({
       embeds: [leaderboard],
@@ -252,6 +252,19 @@ export class LeaderboardCommands {
       return;
     }
 
+    const profiles = await Profiles.find({
+      guildId: interaction.guild.id,
+    }).sort({ vouches: -1 }); // []
+
+    if (!profiles || !profiles.length) {
+      await interaction.reply({
+        content: `This server does not have any profiles.`,
+        ephemeral: true,
+      });
+
+      return;
+    }
+
     await Settings.findOneAndUpdate(
       {
         guildId: interaction.guild.id,
@@ -263,19 +276,6 @@ export class LeaderboardCommands {
       content: `Leaderboard channel has been updated to ${channel}`,
       ephemeral: true,
     });
-
-    const profiles = await Profiles.find({
-      guildId: interaction.guild.id,
-    }).sort({ vouches: -1 });
-
-    if (!profiles) {
-      await interaction.reply({
-        content: `This server does not have any profiles.`,
-        ephemeral: true,
-      });
-
-      return;
-    }
 
     const vouches = await Vouches.aggregate([
       {
@@ -339,8 +339,8 @@ export class LeaderboardCommands {
       )
 
       .setThumbnail(interaction.guild.iconURL())
-      .setFooter({ text: `powered by Vouched` })
-      .setInvisible();
+      // .setFooter({ text: `powered by Vouched` })
+      .setMain();
 
     const sentMessage = await channel.send({
       embeds: [leaderboard],

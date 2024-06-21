@@ -24,6 +24,7 @@ export class leaderboardUpdate {
         const stats = await Statistics.findOne({ guildId: setting.guildId });
 
         if (!stats) {
+          console.log(`No stats found for ${setting.guildName}`);
           return;
         }
 
@@ -33,43 +34,43 @@ export class leaderboardUpdate {
         }).sort({ vouches: -1 });
 
         if (!profiles) {
+          console.log(`No profiles found for ${setting.guildName}`);
           return;
         }
 
+        //from Vouches collection, get all vouches for each user in the guild and sum them up
         const vouches = await Vouches.aggregate([
-          {
-            $match: { guildId: setting.guildId },
-          },
+          { $match: { guildId: setting.guildId } },
           {
             $group: {
-              _id: null,
-              totalVouches: { $sum: "$vouches" },
-              totalAmount: { $sum: "$amount" },
+              _id: "$vouchedUser",
+              totalVouches: { $sum: 1 },
             },
           },
-        ]);
+        ]).sort({ totalVouches: -1 });
 
-        let totalVouches = 0;
-        let totalAmount = 0;
-
-        if (vouches[0]) {
-          totalVouches = vouches[0].totalVouches;
-          totalAmount = vouches[0].totalAmount;
-        } else {
-          console.log("No vouches found.");
+        // check for empty vouches
+        if (!vouches || !vouches.length) {
+          console.log(`No vouches found for ${setting.guildName}`);
+          return;
         }
+
+        //console log the user with their vouches
 
         const timestamp = Math.floor(Date.now() / 1000);
 
-        // create a leaderboard embed with the top 10 profiles in the guild
         const leaderboard = new EmbedMe()
           .setTitle(`${setting.guildName} - Leaderboard`)
           .setDescription(
-            profiles
-              .slice(0, 10)
+            vouches
               .map(
-                (profile, index) =>
-                  `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${profile.vouches}** Vouches`
+                (vouch, index) => {
+                  const profile = profiles.find(el => el.user.id === vouch._id);
+                  
+                  if (!profile) return;
+                  
+                  return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`
+                }
               )
               .join("\n")
           )
@@ -85,19 +86,19 @@ export class leaderboardUpdate {
             },
             {
               name: "Vouches",
-              value: `${Emojis.BLANK}${totalVouches || 0}`,
+              value: `${Emojis.BLANK}${stats.vouches.totalVouches || 0}`,
               inline: true,
             },
             {
               name: "Total Exchanged",
-              value: `${Emojis.BLANK} **$**${totalAmount.toFixed(2) || 0}`,
+              value: `${Emojis.BLANK} **$**${stats.vouches.totalAmount.toFixed(2) || 0}`,
               inline: true,
             }
           )
 
           .setThumbnail(setting.guildIcon)
-          .setFooter({ text: `powered by Vouched` })
-          .setInvisible();
+          // .setFooter({ text: `powered by Vouched` })
+          .setMain();
 
         const channel = bot.channels.cache.get(
           setting.Channels.leaderboard
@@ -128,6 +129,6 @@ export class leaderboardUpdate {
           embeds: [leaderboard],
         });
       });
-    }, 10000);
+    }, 10000); // 30 minutes
   }
 }

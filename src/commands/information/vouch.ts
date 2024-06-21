@@ -67,7 +67,10 @@ export class LevelRoleCommands {
     const stars = parseInt(starsVar);
 
     // check if the user has a profile, if not create one
-    const profile = await Profiles.findOne({ "user.id": userVar.id });
+    const profile = await Profiles.findOne({
+      guildId: interaction.guild.id,
+      "user.id": userVar.id,
+    });
 
     if (!profile) {
       await Profiles.create({
@@ -114,6 +117,30 @@ export class LevelRoleCommands {
       ephemeral: true,
     });
 
+    const stats = await Statistics.findOne({ guildId: interaction.guild.id });
+
+    if (!stats) {
+      console.log(`Creating new stats for ${interaction.guild.name}`);
+      await Statistics.create({
+        guildId: interaction.guild.id,
+        guildName: interaction.guild.name,
+        vouches: {
+          totalVouches: 1,
+          totalAmount: parseInt(amountVar),
+        },
+      });
+    } else {
+      await Statistics.updateOne(
+        { guildId: interaction.guild.id },
+        {
+          $inc: {
+            "vouches.totalVouches": 1,
+            "vouches.totalAmount": parseInt(amountVar),
+          },
+        }
+      );
+    }
+
     const vouchChannel = await Settings.findOne({
       guildId: interaction.guild.id,
       "Channels.vouches": { $exists: true },
@@ -125,7 +152,10 @@ export class LevelRoleCommands {
       vouchChannel.Channels.vouches
     ) as TextChannel;
 
-    if (!channel) return;
+    if (!channel) {
+      console.log("Channel not found");
+      return;
+    }
 
     const vouchEmbed = new EmbedMe()
       .setTitle("New Vouch")
@@ -159,33 +189,11 @@ export class LevelRoleCommands {
         text: `powered by Vouched`,
         iconURL: interaction.client.user.displayAvatarURL(),
       })
-      .setInvisible()
+      .setInvisible();
 
     await channel.send({
       embeds: [vouchEmbed],
     });
-
-    const stats = await Statistics.findOne({ guildId: interaction.guild.id });
-
-    if (!stats) {
-      await Statistics.create({
-        guildId: interaction.guild.id,
-        vouches: {
-          totalVouches: 1,
-          totalAmount: Number(amountVar),
-        },
-      });
-    } else {
-      await Statistics.updateOne(
-        { guildId: interaction.guild.id },
-        {
-          $inc: {
-            "vouches.totalVouches": 1,
-            "vouches.totalAmount": Number(amountVar),
-          },
-        }
-      );
-    }
 
     const vouchDm = new EmbedMe()
       .setTitle(`You've been vouched in ${interaction.guild.name}`)
@@ -214,7 +222,7 @@ export class LevelRoleCommands {
         text: `powered by Vouched`,
         iconURL: interaction.client.user.displayAvatarURL(),
       })
-      .setInvisible()
+      .setInvisible();
 
     await userVar.send({
       embeds: [vouchDm],

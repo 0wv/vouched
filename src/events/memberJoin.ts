@@ -8,6 +8,9 @@ import Profile from "../models/Profile.js";
 export class MemberJoin {
   @On()
   async guildMemberAdd([member]: ArgsOf<"guildMemberAdd">) {
+
+    if(member.user.bot) return;
+
     const profile = await Profile.findOne({ userID: member.id });
     if (profile) return;
 
