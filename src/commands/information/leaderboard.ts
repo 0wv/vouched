@@ -198,7 +198,7 @@ export class LeaderboardCommands {
           inline: true,
         }
       )
-      // .setFooter({ text: `powered by Vouched` })
+      .setFooter({ text: `powered by Vouched` })
       .setMain();
 
     await interaction.reply({
