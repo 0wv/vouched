@@ -64,52 +64,63 @@ export class LeaderboardCommands {
     }
 
     const vouches = await Vouches.aggregate([
+      { $match: { guildId: interaction.guild.id } },
       {
         $group: {
-          _id: null,
-          totalVouches: { $sum: "$vouches" },
-          totalAmount: { $sum: "$amount" },
+          _id: "$vouchedUser",
+          totalVouches: { $sum: 1 },
         },
       },
-    ]); // fetch all vouches in the guild, sum them up and return the total vouches and total amount
+    ]).sort({ totalVouches: -1 });
 
-    // create a leaderboard embed with the top 10 profiles in the guild
+    // check for empty vouches
+    if (!vouches || !vouches.length) {
+      console.log(`No vouches found for ${interaction.guild.name}`);
+      return;
+    }
+
+    //console log the user with their vouches
+
+    const timestamp = Math.floor(Date.now() / 1000);
+
     const leaderboard = new EmbedMe()
       .setTitle(`${interaction.guild.name} - Leaderboard`)
       .setDescription(
-        profiles
-          .slice(0, 10)
-          .map(
-            (profile, index) =>
-              `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${profile.vouches}** Vouches`
-          )
+        vouches
+          .map((vouch, index) => {
+            const profile = profiles.find((el) => el.user.id === vouch._id);
+
+            if (!profile) return;
+
+            return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`;
+          })
           .join("\n")
       )
       .addFields(
         {
-          name: " Your Rank",
-          value: `${Emojis.BLANK}**\` ${
-            profiles.findIndex(
-              (profile) => profile.user.id === interaction.user.id
-            ) + 1
-          } \`**`,
+          name: "\u200b",
+          value: `\u200b`,
+        },
+        {
+          name: "Last Updated",
+          value: `<t:${timestamp}:R>`,
           inline: true,
         },
         {
           name: "Vouches",
-          value: `${Emojis.BLANK}${vouches[0].totalVouches}`,
+          value: `${Emojis.BLANK}${stats.vouches.totalVouches || 0}`,
           inline: true,
         },
         {
           name: "Total Exchanged",
-          value: `${Emojis.BLANK} **$**${vouches[0].totalAmount.toFixed(2)}`,
+          value: `${Emojis.BLANK} **$**${stats.vouches.totalAmount.toFixed(2) || 0}`,
           inline: true,
         }
       )
 
       .setThumbnail(interaction.guild.iconURL())
-      .setFooter({ text: `powered by Vouched` })
-      .setInvisible();
+      // .setFooter({ text: `powered by Vouched` })
+      .setMain();
 
     await interaction.reply({
       embeds: [leaderboard],
@@ -135,7 +146,6 @@ export class LeaderboardCommands {
       return;
     }
 
-    //total up all vouches and total amount exchanged
     const vouches = await Vouches.aggregate([
       {
         $group: {
@@ -143,33 +153,43 @@ export class LeaderboardCommands {
           totalVouches: { $sum: 1 },
           totalAmount: { $sum: "$amount" },
         },
-      } as any, // Add this line to cast the object to 'any' type
+      } as any,
     ]);
+
+    //fetch the guilds and sort them by vouches using statistics model to get the top 10 guilds with the most vouches
+    const guilds = await Statistics.find().sort({ "vouches.totalVouches": -1 });
 
     const leaderboard = new EmbedMe()
       .setTitle(`Global Leaderboard`)
       .setDescription(
-        profiles
-          .map(
-            (profile, index) =>
-              `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${profile.vouches}** Vouches`
-          )
-          .join("\n")
-      )
-      .setThumbnail(interaction.guild.iconURL())
+        guilds
+            .slice(0, 10)
+            .map(
+                (guild, index) => {
+                    let medal = '';
+                    if (index === 0) medal = ' 🥇';
+                    else if (index === 1) medal = ' 🥈';
+                    else if (index === 2) medal = ' 🥉';
+    
+                    return `**\` ${index + 1} \`** ${Emojis.BLANK}**${guild.guildName}** - **${guild.vouches.totalVouches}** Vouches ${medal}`;
+                }
+            )
+            .join("\n")
+    )
+      // .setThumbnail(interaction.guild.iconURL())
       .addFields(
         {
-          name: " Your Rank",
-          value: `${Emojis.BLANK}**\` ${
-            profiles.findIndex(
-              (profile) => profile.user.id === interaction.user.id
-            ) + 1
-          } \`**`,
+          name: "\u200b",
+          value: `\u200b`,
+        },
+        {
+          name: "Guild Rank",
+          value: `${Emojis.BLANK}**\` ${guilds.findIndex((el) => el.guildId === interaction.guild?.id) + 1} \`**`,
           inline: true,
         },
         {
           name: "Global Vouches",
-          value: `${Emojis.BLANK}${vouches[0].totalVouches}`,
+          value: `${Emojis.BLANK} **\` ${vouches[0].totalVouches} \`**`,
           inline: true,
         },
         {

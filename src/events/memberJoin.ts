@@ -15,7 +15,7 @@ export class MemberJoin {
     if (profile) return;
 
     await Profile.create({
-      guildId: member.guild.id,
+      // guildId: member.guild.id,
       user: {
         id: member.id,
         username: member.user.username,

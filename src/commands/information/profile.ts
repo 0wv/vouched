@@ -68,7 +68,7 @@ export class ProfileCommands {
           from: "vouches",
           let: { vouchedUser: "$_id" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$vouchedUser", "$$vouchedUser"] } } },
+            { $match: { $expr: { $eq: ["$vouchedUser", "$vouchedUser"] } } },
             { $sort: { createdAt: -1 } },
             { $limit: 3 },
           ],

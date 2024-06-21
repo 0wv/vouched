@@ -68,7 +68,7 @@ export class LevelRoleCommands {
 
     // check if the user has a profile, if not create one
     const profile = await Profiles.findOne({
-      guildId: interaction.guild.id,
+      // guildId: interaction.guild.id,
       "user.id": userVar.id,
     });
 
@@ -224,9 +224,13 @@ export class LevelRoleCommands {
       })
       .setInvisible();
 
-    await userVar.send({
-      embeds: [vouchDm],
-    });
+    try {
+      await userVar.send({
+        embeds: [vouchDm],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @Slash({

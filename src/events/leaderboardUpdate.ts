@@ -129,6 +129,6 @@ export class leaderboardUpdate {
           embeds: [leaderboard],
         });
       });
-    }, 10000); // 30 minutes
+    }, 1800000); // 30 mins
   }
 }
