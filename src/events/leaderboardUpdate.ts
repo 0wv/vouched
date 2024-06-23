@@ -23,20 +23,20 @@ export class leaderboardUpdate {
       settings.forEach(async (setting) => {
         const stats = await Statistics.findOne({ guildId: setting.guildId });
 
-        if (!stats) {
-          console.log(`No stats found for ${setting.guildName}`);
-          return;
-        }
+        // if (!stats) {
+        //   console.log(`No stats found for ${setting.guildName}`);
+        //   return;
+        // }
 
         // fetch all profiles in the guild and sort by vouches descending
         const profiles = await Profiles.find({
-          guildId: setting.guildId,
+          // guildId: setting.guildId,
         }).sort({ vouches: -1 });
 
-        if (!profiles) {
-          console.log(`No profiles found for ${setting.guildName}`);
-          return;
-        }
+        // if (!profiles) {
+        //   console.log(`No profiles found for ${setting.guildName}`);
+        //   return;
+        // }
 
         //from Vouches collection, get all vouches for each user in the guild and sum them up
         const vouches = await Vouches.aggregate([
@@ -49,31 +49,31 @@ export class leaderboardUpdate {
           },
         ]).sort({ totalVouches: -1 });
 
-        // check for empty vouches
-        if (!vouches || !vouches.length) {
-          console.log(`No vouches found for ${setting.guildName}`);
-          return;
-        }
+        // // check for empty vouches
+        // if (!vouches || !vouches.length) {
+        //   console.log(`No vouches found for ${setting.guildName}`);
+        //   return;
+        // }
 
-        //console log the user with their vouches
+        let vouchesMap = vouches
+          .map((vouch, index) => {
+            const profile = profiles.find((el) => el.user.id === vouch._id);
+
+            if (!profile) return;
+
+            return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`;
+          })
+          .join("\n");
+
+        if (vouchesMap === "") {
+          vouchesMap = `\n**Something seems off :(**\n\n__This guild has no vouches yet__!`;
+        }
 
         const timestamp = Math.floor(Date.now() / 1000);
 
         const leaderboard = new EmbedMe()
           .setTitle(`${setting.guildName} - Leaderboard`)
-          .setDescription(
-            vouches
-              .map(
-                (vouch, index) => {
-                  const profile = profiles.find(el => el.user.id === vouch._id);
-                  
-                  if (!profile) return;
-                  
-                  return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`
-                }
-              )
-              .join("\n")
-          )
+          .setDescription(vouchesMap)
           .addFields(
             {
               name: "\u200b",
@@ -86,12 +86,12 @@ export class leaderboardUpdate {
             },
             {
               name: "Vouches",
-              value: `${Emojis.BLANK}${stats.vouches.totalVouches || 0}`,
+              value: `${Emojis.BLANK}${stats?.vouches.totalVouches || 0}`,
               inline: true,
             },
             {
               name: "Total Exchanged",
-              value: `${Emojis.BLANK} **$**${stats.vouches.totalAmount.toFixed(2) || 0}`,
+              value: `${Emojis.BLANK} **$**${stats?.vouches.totalAmount.toFixed(2) || 0}`,
               inline: true,
             }
           )
@@ -129,6 +129,6 @@ export class leaderboardUpdate {
           embeds: [leaderboard],
         });
       });
-    }, 1800000); // 30 mins
+    }, 1800000); // 30 minutes - 1800000
   }
 }

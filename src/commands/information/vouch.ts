@@ -80,7 +80,7 @@ export class LevelRoleCommands {
           username: userVar.user.username,
           nickname: userVar.nickname,
         },
-        vouches: 1,
+        vouches: 0,
       });
     }
 

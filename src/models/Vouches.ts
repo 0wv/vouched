@@ -7,6 +7,7 @@ export interface IVouches extends Document {
   stars: number;
   note: string;
   amount: number;
+  createdAt: Date;
 }
 
 const VouchesSchema: Schema = new Schema(
@@ -17,6 +18,7 @@ const VouchesSchema: Schema = new Schema(
     stars: { type: Number, required: true },
     note: { type: String, required: false },
     amount: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

@@ -79,23 +79,25 @@ export class LeaderboardCommands {
       return;
     }
 
-    //console log the user with their vouches
+    let vouchesMap = vouches
+      .map((vouch, index) => {
+        const profile = profiles.find((el) => el.user.id === vouch._id);
+
+        if (!profile) return;
+
+        return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`;
+      })
+      .join("\n");
+
+    if (vouchesMap === "") {
+      vouchesMap = `\n**Something seems off :(**\n\n__This guild has no vouches yet__!`;
+    }
 
     const timestamp = Math.floor(Date.now() / 1000);
 
     const leaderboard = new EmbedMe()
       .setTitle(`${interaction.guild.name} - Leaderboard`)
-      .setDescription(
-        vouches
-          .map((vouch, index) => {
-            const profile = profiles.find((el) => el.user.id === vouch._id);
-
-            if (!profile) return;
-
-            return `**\` ${index + 1} \`** ${Emojis.BLANK}**${profile.user.username}** - **${vouch.totalVouches || 0}** Vouches`;
-          })
-          .join("\n")
-      )
+      .setDescription(vouchesMap)
       .addFields(
         {
           name: "\u200b",
@@ -163,19 +165,17 @@ export class LeaderboardCommands {
       .setTitle(`Global Leaderboard`)
       .setDescription(
         guilds
-            .slice(0, 10)
-            .map(
-                (guild, index) => {
-                    let medal = '';
-                    if (index === 0) medal = ' 🥇';
-                    else if (index === 1) medal = ' 🥈';
-                    else if (index === 2) medal = ' 🥉';
-    
-                    return `**\` ${index + 1} \`** ${Emojis.BLANK}**${guild.guildName}** - **${guild.vouches.totalVouches}** Vouches ${medal}`;
-                }
-            )
-            .join("\n")
-    )
+          .slice(0, 10)
+          .map((guild, index) => {
+            let medal = "";
+            if (index === 0) medal = " 🥇";
+            else if (index === 1) medal = " 🥈";
+            else if (index === 2) medal = " 🥉";
+
+            return `**\` ${index + 1} \`** ${Emojis.BLANK}**${guild.guildName}** - **${guild.vouches.totalVouches}** Vouches ${medal}`;
+          })
+          .join("\n")
+      )
       // .setThumbnail(interaction.guild.iconURL())
       .addFields(
         {

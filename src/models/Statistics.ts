@@ -4,6 +4,7 @@ export interface IStats extends Document {
   guildId: string;
   guildName: string;
   vouches: {
+    map(arg0: (vouch: any) => any): unknown[] | undefined;
     totalVouches: number;
     totalAmount: number;
   };

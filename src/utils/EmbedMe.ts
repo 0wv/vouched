@@ -19,7 +19,7 @@ export default class EmbedMe extends EmbedBuilder {
 	}
 
 	public setMain(): this {
-		this.setImage("https://cdn.discordapp.com/attachments/1251331189952872458/1253660440169287731/eDLDVqG.png?ex=6676a9c4&is=66755844&hm=7ed609270db61a1c8983a10224f26255222ed55f4588884f0b7d2ed8e66937c5&").setColor(0x88abf9);
+		this.setImage("https://cdn.discordapp.com/attachments/1254109991640502375/1254110028965744791/hFyzUCU.png?ex=66784c7b&is=6676fafb&hm=b2bb70b0b2facacd500f34b5509888527295d22621edb1c153bc27e1a3f4b265&").setColor(0x88abf9);
 		return this;
 	}
 
