@@ -20,7 +20,7 @@ export class MemberJoin {
       Channels: {
         vouches: null,
       },
-
+      setup: false,
     });
 
     console.log(

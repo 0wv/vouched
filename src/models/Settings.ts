@@ -8,6 +8,7 @@ export interface ISettings extends Document {
     vouches: string;
     leaderboard: string;
   };
+  setup: boolean;
 }
 
 const SettingsSchema: Schema = new Schema(
@@ -19,6 +20,7 @@ const SettingsSchema: Schema = new Schema(
       vouches: { type: String, required: false },
       leaderboard: { type: String, required: false },
     },
+    setup: { type: Boolean, required: true, default: false },
   },
   { timestamps: true }
 );
