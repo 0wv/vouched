@@ -40,8 +40,7 @@ export class Setup {
 
     const welcomeEmbed = new EmbedMe()
       .setDescription(
-        `**Hey**! Welcome to the setup process, I save you time by setting everything important up for you.\n\nI'll show you what i'm doing, **as i'm dong it**, so relax while I get things ready for you
-      \n__*We'll being in 15 seconds*__
+        `**Hey**! Welcome to the setup process, I save you time by setting everything important up for you.\n\nGive me a few seconds to get everything ready for you!
       \n\nThis progress bar will show you how far along we are!`
       )
       .setThumbnail("https://i.imgur.com/u1hy4jz.png")
@@ -59,12 +58,6 @@ export class Setup {
     );
 
     await delay(5000);
-    await infoBoard.edit({
-      embeds: [
-        welcomeEmbed.setDescription(`**Let's begin**, I'll begin creating the channels **leaderboard** and **vouches**, I'll also setup all the permissions for you.  
-      \n\nThis progress bar will show you how far along we are!`),
-      ],
-    });
     await bar?.edit(
       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
     );
@@ -74,14 +67,11 @@ export class Setup {
       (r) => r.name === "@everyone"
     );
 
-    //create a category for the channels
     const category = await interaction.guild.channels.create({
       name: "Vouched",
       type: ChannelType.GuildCategory,
       position: 1,
     });
-
-    console.log("Created category");
 
     const leaderboardCh = await category.children.create({
       name: "leaderboard",
@@ -94,8 +84,6 @@ export class Setup {
       ],
     });
 
-    console.log("Created leaderboard channel");
-
     const vouchesCh = await category.children.create({
       name: "vouches",
       type: ChannelType.GuildText,
@@ -107,11 +95,11 @@ export class Setup {
       ],
     });
 
-    console.log("Created vouches channel");
-
     if (!settings) {
       await Settings.create({
         guildId: interaction.guild.id,
+        guildName: interaction.guild.name,
+        guildIcon: interaction.guild.iconURL(),
         "Channels.leaderboard": leaderboardCh.id,
         "Channels.vouches": vouchesCh.id,
       });
@@ -130,31 +118,18 @@ export class Setup {
     );
 
     await delay(5000);
-    await infoBoard.edit({
-      embeds: [
-        welcomeEmbed.setDescription(`Channels created, now i'll create the **client** role for you.  
-      \n\nThis progress bar will show you how far along we are!`),
-      ],
-    });
+
     await bar?.edit(
       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
     );
 
-    //create a role called client, and make it the color #88abf9
     await interaction.guild.roles.create({
       name: "client",
       color: "#88abf9",
     });
 
-    console.log("Created client role");
-
     await delay(5000);
-    await infoBoard.edit({
-      embeds: [
-        welcomeEmbed.setDescription(`**Almost there!** Lastly i'll make sure everything is in place, and finalise everything for you.  
-      \n\nThis progress bar will show you how far along we are!`),
-      ],
-    });
+
     await bar?.edit(
       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG3}`
     );
@@ -164,7 +139,8 @@ export class Setup {
       embeds: [
         welcomeEmbed
           .setDescription(
-            `**COMPLETE**\n\n Everything is now setup and should be in working order, Thanks for your patience :)`
+            `**SETUP COMPLETE**\n\n Everything is now setup and should be in working order, Thanks for your patience :)
+            \n\nIf you need to add channels **manually**, use the **\` /vouch \`** or **\` /leaderboard \`** commands to set them up.`
           )
           .setColor("#2EFF5B"),
       ],
@@ -172,6 +148,9 @@ export class Setup {
     await bar?.edit(
       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB3}`
     );
+
+    await delay(2000);
+    await bar?.delete();
 
     const stats = await Statistics.findOne({ guildId: interaction.guild.id });
 
