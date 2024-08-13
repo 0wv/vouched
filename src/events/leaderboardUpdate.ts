@@ -66,7 +66,7 @@ export class leaderboardUpdate {
           .join("\n");
 
         if (vouchesMap === "") {
-          vouchesMap = `\n**Something seems off :(**\n\n__This guild has no vouches yet__!`;
+          vouchesMap = `\n\n**Something seems off :(**\n\n__This guild has no vouches yet__!`;
         }
 
         const timestamp = Math.floor(Date.now() / 1000);

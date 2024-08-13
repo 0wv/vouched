@@ -5,7 +5,15 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
+import {
+  Discord,
+  Slash,
+  SlashChoice,
+  SlashGroup,
+  SlashOption,
+  Guard,
+} from "discordx";
+import { PermissionGuard } from "@discordx/utilities";
 import EmbedMe from "../../utils/EmbedMe.js";
 import Profiles from "../../models/Profile.js";
 import Settings from "../../models/Settings.js";
@@ -23,6 +31,12 @@ export class ResetCommands {
     description: "reset a user's profile",
     name: "profile",
   })
+  @Guard(
+    PermissionGuard(["Administrator"], {
+      content: "You do not have the permission **`ADMINISTRATOR`** ",
+      ephemeral: true,
+    })
+  )
   async resetProfile(
     @SlashOption({
       description: "the user you wish to reset the profile of.",

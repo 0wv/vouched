@@ -2,7 +2,7 @@ import mongoose, { PopulatedDoc, Schema } from "mongoose";
 
 export interface IVouches extends Document {
   guildId: string;
-  vouchUser: string;
+  vouchedUser: string;
   vouchedBy: string;
   stars: number;
   note: string;

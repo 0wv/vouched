@@ -7,7 +7,8 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
+import { Discord, Slash, SlashChoice, SlashGroup, SlashOption, Guard } from "discordx";
+import { PermissionGuard } from "@discordx/utilities";
 import EmbedMe from "../../utils/EmbedMe.js";
 import Profiles from "../../models/Profile.js";
 import Settings from "../../models/Settings.js";
@@ -24,6 +25,12 @@ export class Setup {
     description: "Set's up the bot for you, hassle free",
     name: "setup",
   })
+  @Guard(
+    PermissionGuard(["Administrator"], {
+      content: "You do not have the permission **`ADMINISTRATOR`** ",
+      ephemeral: true,
+    })
+  )
   async setupGuild(interaction: CommandInteraction): Promise<void> {
     if (!interaction.guild) return;
 
@@ -38,30 +45,30 @@ export class Setup {
       return;
     }
 
-    const welcomeEmbed = new EmbedMe()
-      .setDescription(
-        `**Hey**! Welcome to the setup process, I save you time by setting everything important up for you.\n\nGive me a few seconds to get everything ready for you!
-      \n\nThis progress bar will show you how far along we are!`
-      )
-      .setThumbnail("https://i.imgur.com/u1hy4jz.png")
-      .setColor("#88abf9");
+    //     const welcomeEmbed = new EmbedMe()
+    //       .setDescription(
+    //         `**Hey**! Welcome to the setup process, I save you time by setting everything important up for you.\n\nGive me a few seconds to get everything ready for you!
+    //       \n\nThis progress bar will show you how far along we are!`
+    //       )
+    //       .setThumbnail("https://i.imgur.com/u1hy4jz.png")
+    //       .setColor("#88abf9");
 
     // const progressBar = new EmbedMe()
     // .setDescription(`${Emojis.SBG1}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`)
-
-    const infoBoard = await interaction.reply({
-      embeds: [welcomeEmbed],
-      ephemeral: false,
-    });
-    const bar = await interaction.channel?.send(
-      `${Emojis.SBG1}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
-    );
-
-    await delay(5000);
-    await bar?.edit(
-      `${Emojis.SB1}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
-    );
-    await delay(1000);
+    //
+    //     const infoBoard = await interaction.reply({
+    //       embeds: [welcomeEmbed],
+    //       ephemeral: false,
+    //     });
+    //     const bar = await interaction.channel?.send(
+    //       `${Emojis.SBG1}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
+    //     );
+    //
+    //     await delay(5000);
+    //     await bar?.edit(
+    //       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
+    //     );
+    //     await delay(1000);
 
     let everyone = interaction.guild.roles.cache.find(
       (r) => r.name === "@everyone"
@@ -117,40 +124,40 @@ export class Setup {
       }
     );
 
-    await delay(5000);
-
-    await bar?.edit(
-      `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
-    );
+    //     await delay(5000);
+    //
+    //     await bar?.edit(
+    //       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG2}${Emojis.SBG3}`
+    //     );
 
     await interaction.guild.roles.create({
       name: "client",
       color: "#88abf9",
     });
 
-    await delay(5000);
+    //     await delay(5000);
+    //
+    //     await bar?.edit(
+    //       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG3}`
+    //     );
 
-    await bar?.edit(
-      `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB35}${Emojis.SBG2}${Emojis.SBG3}`
-    );
+    //     await delay(5000);
+    //     await infoBoard.edit({
+    //       embeds: [
+    //         welcomeEmbed
+    //           .setDescription(
+    //             `**SETUP COMPLETE**\n\n Everything is now setup and should be in working order, Thanks for your patience :)
+    //             \n\nIf you need to add channels **manually**, use the **\` /vouch \`** or **\` /leaderboard \`** commands to set them up.`
+    //           )
+    //           .setColor("#2EFF5B"),
+    //       ],
+    //     });
+    //     await bar?.edit(
+    //       `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB3}`
+    //     );
 
-    await delay(5000);
-    await infoBoard.edit({
-      embeds: [
-        welcomeEmbed
-          .setDescription(
-            `**SETUP COMPLETE**\n\n Everything is now setup and should be in working order, Thanks for your patience :)
-            \n\nIf you need to add channels **manually**, use the **\` /vouch \`** or **\` /leaderboard \`** commands to set them up.`
-          )
-          .setColor("#2EFF5B"),
-      ],
-    });
-    await bar?.edit(
-      `${Emojis.SB1}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB2}${Emojis.SB3}`
-    );
-
-    await delay(2000);
-    await bar?.delete();
+    //     await delay(2000);
+    //     await bar?.delete();
 
     const stats = await Statistics.findOne({ guildId: interaction.guild.id });
 
@@ -216,5 +223,9 @@ export class Setup {
     });
 
     await settings.updateOne({ setup: true });
+
+    const setupComplete = new EmbedMe().setDescription(
+      `**SETUP COMPLETE**\n\n Everything is now setup and should be in working order, Thanks for your patience`
+    );
   }
 }
