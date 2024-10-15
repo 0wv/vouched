@@ -2,6 +2,7 @@ import mongoose, { PopulatedDoc, Schema } from "mongoose";
 
 export interface IVouches extends Document {
   guildId: string;
+  guildOwnerId: string;
   vouchedUser: string;
   vouchedBy: string;
   stars: number;
@@ -13,6 +14,7 @@ export interface IVouches extends Document {
 const VouchesSchema: Schema = new Schema(
   {
     guildId: { type: String, required: true },
+    guildOwnerId: { type: String, required: true },
     vouchedUser: { type: String, required: true },
     vouchedBy: { type: String, required: true },
     stars: { type: Number, required: true },

@@ -34,12 +34,15 @@ export class RestoreCommands {
   )
   async vouchesRestore(interaction: CommandInteraction): Promise<void> {
     const guildId = interaction.guild?.id;
+    const guildOwner = interaction.guild?.ownerId;
 
     if (!guildId) {
       return;
     }
 
-    const vouches = await Vouches.find({ guildId: guildId });
+    const vouches = await Vouches.find({
+      guildOwnerId: guildOwner,
+    });
 
     if (!vouches) {
       await interaction.reply({
@@ -55,11 +58,15 @@ export class RestoreCommands {
       "Channels.vouches": { $exists: true },
     });
 
+    console.log("Vouch Channel: ", vouchChannel);
+
     if (!vouchChannel) return;
 
     const channel = interaction.guild.channels.cache.get(
       vouchChannel.Channels.vouches
     ) as TextChannel;
+
+    console.log("Channel: ", channel);
 
     if (!channel) {
       console.log("Channel not found");
@@ -75,6 +82,7 @@ export class RestoreCommands {
     ];
 
     vouches.forEach(async (vouch) => {
+      console.log("Vouch:", vouch);
       const starObject = starsList.find(
         (star) => star.value === vouch.stars.toString()
       );
@@ -85,6 +93,7 @@ export class RestoreCommands {
       const userAvatar = vouchedUser?.user.displayAvatarURL() as string;
 
       if (starObject) {
+        console.log("Star rating found for vouch:", vouch);
         const stars = parseInt(starObject.value);
         await channel.send({
           embeds: [

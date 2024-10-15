@@ -29,11 +29,16 @@ export const bot = new Client({
     IntentsBitField.Flags.MessageContent,
   ],
 
-  partials: [Partials.GuildMember, Partials.Message, Partials.Reaction, Partials.User],
+  partials: [
+    Partials.GuildMember,
+    Partials.Message,
+    Partials.Reaction,
+    Partials.User,
+  ],
 
   // Debug logs are disabled in silent mode
   silent: true,
-}) as Client
+}) as Client;
 
 async function updatePresence() {
   bot.user?.setPresence({
@@ -55,8 +60,7 @@ bot.once("ready", async () => {
   await bot.initApplicationCommands();
 
   updatePresence();
-  setInterval(updatePresence, 300000);
-
+  setInterval(updatePresence, 3200000);
 
   // To clear all guild commands, uncomment this line,
   // This is useful when moving from guild commands to global commands
